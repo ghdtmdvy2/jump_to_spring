@@ -23,7 +23,6 @@ public class AnswerController {
         // 답변 등록 시작
         answerService.create(question, content);
         // 답변 등록 끝
-
         return "redirect:/question/detail/%d".formatted(id);
     }
 }

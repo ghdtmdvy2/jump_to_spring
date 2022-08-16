@@ -7,3 +7,7 @@
     <textarea name="content" rows="15" required></textarea>
     <button type="submit">답변등록</button>
 </form>
+<h5 th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다|"></h5>
+<ul>
+    <li th:each="answer : ${question.answerList}" th:text="${answer.content}"></li>
+</ul>
