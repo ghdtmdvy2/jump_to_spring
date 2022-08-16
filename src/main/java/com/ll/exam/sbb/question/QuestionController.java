@@ -32,4 +32,5 @@ public class QuestionController {
     public String list2() {
         return "하하111777";
     }
+
 }
