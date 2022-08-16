@@ -8,20 +8,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
 
 @RequestMapping("/answer")
 @Controller
-@RequiredArgsConstructor // 생성자 주입
+@RequiredArgsConstructor
 public class AnswerController {
     private final QuestionService questionService;
+    private final AnswerService answerService;
 
     @PostMapping("/create/{id}")
-    // 이 자리에 @ResponseBody가 없으면 resources/question_list/question_list.html 파일을 뷰로 삼는다.
     public String detail(Model model, @PathVariable int id, String content) {
-        Question question = questionService.getQuestion(id);
+        Question question = this.questionService.getQuestion(id);
+
+        // 답변 등록 시작
+        answerService.create(question, content);
+        // 답변 등록 끝
+
         return "redirect:/question/detail/%d".formatted(id);
     }
 }
