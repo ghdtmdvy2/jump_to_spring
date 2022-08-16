@@ -1,0 +1,15 @@
+<table>
+    <thead>
+    <tr>
+        <th>제목</th>
+        <th>작성일지</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="question, loop:${questionList}">
+        <td th:text="|${loop.count} / ${loop.size}|"></td>
+        <td th:text="${question.subject}"></td>
+        <td th:text="|Date. ${#strings.substring(question.createDate, 2, 16)}|"></td>
+    </tr>
+    </tbody>
+</table>
