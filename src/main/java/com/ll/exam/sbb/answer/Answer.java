@@ -3,6 +3,8 @@ package com.ll.exam.sbb.answer;
 import com.ll.exam.sbb.question.Question;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ public class Answer {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @CreationTimestamp
     private LocalDateTime createDate;
 
     @ManyToOne

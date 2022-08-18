@@ -3,6 +3,7 @@ package com.ll.exam.sbb.question;
 import com.ll.exam.sbb.answer.Answer;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,6 +22,8 @@ public class Question {
     private String subject;
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @CreationTimestamp
     private LocalDateTime createDate;
 
     @OneToMany(mappedBy = "question", cascade = {CascadeType.ALL})
