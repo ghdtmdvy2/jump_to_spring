@@ -1,6 +1,7 @@
 package com.ll.exam.sbb.question;
 
 import com.ll.exam.sbb.answer.Answer;
+import com.ll.exam.sbb.user.SiteUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,4 +34,8 @@ public class Question {
         answer.setQuestion(this);
         getAnswerList().add(answer);
     }
+
+    @ManyToOne
+    private SiteUser author;
+
 }
