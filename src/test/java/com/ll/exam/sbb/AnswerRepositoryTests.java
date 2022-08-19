@@ -4,13 +4,17 @@ import com.ll.exam.sbb.answer.Answer;
 import com.ll.exam.sbb.answer.AnswerRepository;
 import com.ll.exam.sbb.question.Question;
 import com.ll.exam.sbb.question.QuestionRepository;
+import com.ll.exam.sbb.user.SiteUser;
+import com.ll.exam.sbb.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +27,9 @@ public class AnswerRepositoryTests {
     @Autowired
     private AnswerRepository answerRepository;
     private int lastSampleDataId;
+    @Autowired
+    private UserService userService;
+
 
     @BeforeEach
     void beforeEach() {
@@ -30,11 +37,15 @@ public class AnswerRepositoryTests {
         createSampleData();
     }
 
-    private void clearData() {
+    public static void clearData(AnswerRepository answerRepository, QuestionRepository questionRepository) {
         QuestionRepositoryTests.clearData(questionRepository);
 
         answerRepository.deleteAll(); // DELETE FROM question;
         answerRepository.truncateTable();
+    }
+
+    private void clearData() {
+        clearData(answerRepository, questionRepository);
     }
 
     private void createSampleData() {
@@ -42,11 +53,9 @@ public class AnswerRepositoryTests {
 
         // 관련 답변이 하나없는 상태에서 쿼리 발생
         Question q = questionRepository.findById(1L).get();
-
         Answer a1 = new Answer();
         a1.setContent("sbb는 질문답변 게시판 입니다.");
         a1.setCreateDate(LocalDateTime.now());
-        q.addAnswer(a1);
 
         Answer a2 = new Answer();
         a2.setContent("sbb에서는 주로 스프링부트관련 내용을 다룹니다.");
