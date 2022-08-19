@@ -21,4 +21,8 @@ public class SiteUser {
 
     @Column(unique = true)
     private String email;
+
+    public SiteUser(long id) {
+        this.id = id;
+    }
 }
