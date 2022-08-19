@@ -54,6 +54,11 @@ public class UserController {
             bindingResult.reject("signupFailed",e.getMessage());
             return "signup_form";
         }
+
         return "redirect:/";
+    }
+    @GetMapping("/login")
+    public String login() {
+        return "login_form";
     }
 }
