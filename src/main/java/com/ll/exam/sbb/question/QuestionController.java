@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 @RequestMapping("/question")
 @Controller
@@ -31,7 +30,6 @@ import java.util.List;
 public class QuestionController {
     // @Autowired // 필드 주입
     private final QuestionService questionService;
-
     private final UserService userService;
 
     @GetMapping("/list")
@@ -56,6 +54,45 @@ public class QuestionController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{id}")
+    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
+        Question question = this.questionService.getQuestion(id);
+
+        if (question == null) {
+            throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
+        }
+
+        if (!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+
+        questionForm.setSubject(question.getSubject());
+        questionForm.setContent(question.getContent());
+
+        return "question_form";
+    }
+
+    @PostMapping("/modify/{id}")
+    public String questionModify(@Valid QuestionForm questionForm, BindingResult bindingResult,
+                                 Principal principal, @PathVariable("id") Integer id) {
+        if (bindingResult.hasErrors()) {
+            return "question_form";
+        }
+
+        Question question = this.questionService.getQuestion(id);
+
+        if (question == null) {
+            throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
+        }
+
+        if (!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        }
+        this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
+        return String.format("redirect:/question/detail/%s", id);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String questionCreate(QuestionForm questionForm) {
         return "question_form";
@@ -73,34 +110,22 @@ public class QuestionController {
         questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
         return "redirect:/question/list"; // 질문 저장후 질문목록으로 이동
     }
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/modify/{id}")
-    public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
-        Question question = this.questionService.getQuestion(id);
 
-        if ( question == null ) {
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
+        Question question = questionService.getQuestion(id);
+
+        if (question == null) {
             throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
         }
 
-        if(!question.getAuthor().getUsername().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+        if (!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
 
-        questionForm.setSubject(question.getSubject());
-        questionForm.setContent(question.getContent());
+        questionService.delete(question);
 
-        return "question_form";
-    }
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/modify/{id}")
-    public String questionModify(Principal principal, @PathVariable long id, Model model, @Valid QuestionForm questionForm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "question_form";
-        }
-
-        SiteUser siteUser = userService.getUser(principal.getName());
-
-        questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
-        return "redirect:/question/list"; // 질문 저장후 질문목록으로 이동
+        return "redirect:/";
     }
 }
