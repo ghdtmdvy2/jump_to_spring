@@ -2,7 +2,6 @@ package com.ll.exam.sbb;
 
 import com.ll.exam.sbb.answer.AnswerRepository;
 import com.ll.exam.sbb.question.QuestionRepository;
-import com.ll.exam.sbb.user.SiteUser;
 import com.ll.exam.sbb.user.UserRepository;
 import com.ll.exam.sbb.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class UserServiceTests {
     @Autowired
     private UserService userService;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -40,19 +40,23 @@ public class UserServiceTests {
     }
 
     public static void clearData(UserRepository userRepository, AnswerRepository answerRepository, QuestionRepository questionRepository) {
-        AnswerRepositoryTests.clearData(answerRepository, questionRepository);
-        QuestionRepositoryTests.clearData(questionRepository);
-        userRepository.deleteAll(); // DELETE FROM site_user;
+        answerRepository.deleteAll();
+        answerRepository.truncateTable();
+
+        questionRepository.deleteAll();
+        questionRepository.truncateTable();
+
+        userRepository.deleteAll();
         userRepository.truncateTable();
     }
 
     private void clearData() {
         clearData(userRepository, answerRepository, questionRepository);
     }
+
     @Test
     @DisplayName("회원가입이 가능하다.")
     public void t1() {
         userService.create("user2", "user2@email.com", "1234");
-        SiteUser user = userService.findByUsername("user1");
     }
 }
