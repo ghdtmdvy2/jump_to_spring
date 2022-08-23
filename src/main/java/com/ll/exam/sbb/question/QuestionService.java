@@ -50,7 +50,6 @@ public class QuestionService {
 
     public void vote(Question question, SiteUser siteUser) {
         question.getVoter().add(siteUser);
-
         questionRepository.save(question);
     }
 }
