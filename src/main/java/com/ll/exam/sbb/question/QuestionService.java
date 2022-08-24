@@ -52,4 +52,11 @@ public class QuestionService {
         question.getVoter().add(siteUser);
         questionRepository.save(question);
     }
+
+    public Page<Question> getList(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts)); // 한 페이지에 10까지 가능
+        return this.questionRepository.findBySubjectContaining(kw, pageable);
+    }
 }
