@@ -11,6 +11,16 @@
             <col>
             <col width="50%">
         </colgroup>
+        <form th:action="@{/question/list}" class="flex-grow-1" method="post">
+            <select name="kwType">
+                <option value="">검색</option>
+                <option value="question">질문</option>
+                <option value="question_content">질문 + 내용</option>
+                <option value="question_content_author">질문 + 내용 + 작성자</option>
+            </select>
+            <input type="text" name="kw"/>
+            <button type="submit">찾기</button>
+        </form>
         <thead class="table-dark">
         <tr>
             <th>번호</th>
