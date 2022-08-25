@@ -6,21 +6,22 @@
 <html layout:decorate="~{layout}">
 
 <div layout:fragment="content" class="container my-3">
+    <div class="row my-3">
+        <div class="col-6">
+            <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <form class="input-group">
+                <input class="form-control" type="text" name="kw" placeholder="검색어를 입력해주세요." th:value="${param.kw}">
+                <button type="submit" class="btn btn-outline-secondary">검색</button>
+            </form>
+        </div>
+    </div>
     <table class="table text-center">
         <colgroup>
             <col>
             <col width="50%">
         </colgroup>
-        <form th:action="@{/question/list}" class="flex-grow-1" method="post">
-            <select name="kwType">
-                <option value="">검색</option>
-                <option value="question">질문</option>
-                <option value="question_content">질문 + 내용</option>
-                <option value="question_content_author">질문 + 내용 + 작성자</option>
-            </select>
-            <input type="text" name="kw"/>
-            <button type="submit">찾기</button>
-        </form>
         <thead class="table-dark">
         <tr>
             <th>번호</th>
@@ -63,14 +64,12 @@
             </li>
 
             <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
+                <a class="page-link" th:href="@{|?page=${paging.number+1}&kw=${kw}|}">
                     <span>다음</span>
                 </a>
             </li>
         </ul>
     </div>
-    <!-- 페이징처리 끝 -->
-    <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
 </div>
 
 </html>

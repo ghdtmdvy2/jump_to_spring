@@ -154,7 +154,7 @@ public class QuestionRepositoryTests {
 
     @Test
     void createManySampleData() {
-        boolean run = false;
+        boolean run = true;
 
         if (run == false) return;
 
