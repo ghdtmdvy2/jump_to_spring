@@ -1,6 +1,5 @@
 package com.ll.exam.sbb.question;
 
-import com.ll.exam.sbb.DataNotFoundException;
 import com.ll.exam.sbb.answer.AnswerForm;
 import com.ll.exam.sbb.user.SiteUser;
 import com.ll.exam.sbb.user.UserService;
@@ -34,34 +33,13 @@ public class QuestionController {
 
     @GetMapping("/list")
     // 이 자리에 @ResponseBody가 없으면 resources/question_list/question_list.html 파일을 뷰로 삼는다.
-    public String list(Model model, @RequestParam(defaultValue = "0") int page,String kw) {
-        Page<Question> paging = null;
-        if (kw == null) {
-            paging = questionService.getList(page);
-        }
-        else {
-            paging = questionService.getList(page, kw);
-        }
+    public String list(String kw, Model model, @RequestParam(defaultValue = "0") int page) {
+        Page<Question> paging = questionService.getList(kw, page);
+
         // 미래에 실행된 question_list.html 에서
         // questionList 라는 이름으로 questionList 변수를 사용할 수 있다.
         model.addAttribute("paging", paging);
         model.addAttribute("kw", kw);
-        return "question_list";
-    }
-
-    @PostMapping("/list")
-    // 이 자리에 @ResponseBody가 없으면 resources/question_list/question_list.html 파일을 뷰로 삼는다.
-    public String list_(Model model, @RequestParam(defaultValue = "0") int page, String kw, String kwType) {
-        Page<Question> paging = null;
-        if (kw == null) {
-            paging = questionService.getList(page);
-        }
-        else {
-            paging = questionService.getList(page, kw);
-        }
-        // 미래에 실행된 question_list.html 에서
-        // questionList 라는 이름으로 questionList 변수를 사용할 수 있다.
-        model.addAttribute("paging", paging);
 
         return "question_list";
     }
@@ -79,10 +57,6 @@ public class QuestionController {
     @GetMapping("/modify/{id}")
     public String questionModify(QuestionForm questionForm, @PathVariable("id") Integer id, Principal principal) {
         Question question = this.questionService.getQuestion(id);
-
-        if (question == null) {
-            throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
-        }
 
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -102,10 +76,6 @@ public class QuestionController {
         }
 
         Question question = this.questionService.getQuestion(id);
-
-        if (question == null) {
-            throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
-        }
 
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -137,10 +107,6 @@ public class QuestionController {
     @GetMapping("/delete/{id}")
     public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
         Question question = questionService.getQuestion(id);
-
-        if (question == null) {
-            throw new DataNotFoundException("%d번 질문은 존재하지 않습니다.");
-        }
 
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
